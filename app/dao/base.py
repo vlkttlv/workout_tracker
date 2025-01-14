@@ -5,22 +5,23 @@ class BaseDAO:
     model = None
 
     @classmethod
-    async def find_by_id(cls, id: int):
+    async def find_by_id(cls, model_id: int):
         """
         Находит и возвращает одну запись из таблицы в БД по идентификатору.
         -Аргументы:
-            id (int): Уникальный идентификатор записи, которую нужно найти в таблице.
+            model_id (int): Уникальный идентификатор записи, которую нужно найти в таблице.
         -Возвращает:
             Optional[cls.model]: Экземпляр модели с указанным id, если запись найдена.
             Если запись не найдена, возвращается None.
         """
         async with async_session_maker() as session:
-            stmt = select(cls.model).filter_by(cls.model.id == id)
+            stmt = select(cls.model).filter_by(cls.model.id == model_id)
             res = await session.execute(stmt)
-            return res.scalar_one_or_none() # scalar_one_or_none() — вернёт либо одно значение, либо None, если записей не найдено
+            # вернёт либо одно значение, либо None, если записей не найдено
+            return res.scalar_one_or_none()
 
     @classmethod
-    async def find_all(cls, **filter):
+    async def find_all(cls, **filter_by):
         """
         Находит и возвращает несколько записей из таблицы БД, соответствующие условиям
         -Аргументы:
@@ -33,7 +34,7 @@ class BaseDAO:
             Если записи не найдены, возвращается пустой список.
         """
         async with async_session_maker() as session:
-            stmt = select(cls.model).filter_by(**filter)
+            stmt = select(cls.model).filter_by(**filter_by)
             res = await session.execute(stmt)
             return res.scalars().all()
 
@@ -53,15 +54,15 @@ class BaseDAO:
             await session.commit()
 
     @classmethod
-    async def delete(cls, **filter):
+    async def delete(cls, **filter_by):
         """
         Удаляет запись из таблицы БД по соотвествующему условию
         -Аргументы:
-        **filter: атрибуты модели в качестве ключей и их значения в качестве значений.
+        **filter_by: атрибуты модели в качестве ключей и их значения в качестве значений.
         -Пример: 
             await MyModel.delete(name='Alice') - Это удалит все записи, где name равно 'Alice'.
         """
         async with async_session_maker() as session:
-            stmt = delete(cls.model).filter_by(**filter)
+            stmt = delete(cls.model).filter_by(**filter_by)
             await session.execut(stmt)
             await session.commit()
