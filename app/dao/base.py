@@ -5,17 +5,17 @@ class BaseDAO:
     model = None
 
     @classmethod
-    async def find_by_id(cls, model_id: int):
+    async def find_one_or_none(cls, **filter_by):
         """
-        Находит и возвращает одну запись из таблицы в БД по идентификатору.
+        Находит и возвращает одну запись из таблицы в БД.
         -Аргументы:
-            model_id (int): Уникальный идентификатор записи, которую нужно найти в таблице.
+            **filter_by: атрибуты модели в качестве ключей и их значения в качестве значений.
         -Возвращает:
-            Optional[cls.model]: Экземпляр модели с указанным id, если запись найдена.
+            Optional[cls.model]: Экземпляр модели, если запись найдена.
             Если запись не найдена, возвращается None.
         """
         async with async_session_maker() as session:
-            stmt = select(cls.model).filter_by(cls.model.id == model_id)
+            stmt = select(cls.model).filter_by(**filter_by)
             res = await session.execute(stmt)
             # вернёт либо одно значение, либо None, если записей не найдено
             return res.scalar_one_or_none()
