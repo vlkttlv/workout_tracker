@@ -1,4 +1,4 @@
-from app.database import Base
+from app.db.database import Base
 from logging.config import fileConfig
 import sys
 from os.path import abspath, dirname
@@ -7,7 +7,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from app.config import settings
 from alembic import context
-from app.users.models import Users
+from app.users.models import Users, RefreshToken
+from app.exercises.models import Exercise
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
