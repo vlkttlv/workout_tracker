@@ -37,7 +37,11 @@ async def create_refresh_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     token = jwt.encode(to_encode, settings.SECRET_KEY, settings.ALGORITHM)
     user_id = int(data["sub"])
-    await TokenDAO.add(token=token, user_id=user_id, created_at = now_time, expires_at=expire)
+    token_user = await TokenDAO.find_one_or_none(user_id=user_id)
+    if not token_user:
+        await TokenDAO.add(token=token, user_id=user_id, created_at = now_time, expires_at=expire)
+    else:
+        await TokenDAO.update_token(user_id, token)
     return token
 
 async def authenticate_user(email: EmailStr, password: str):
