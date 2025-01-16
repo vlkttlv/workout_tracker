@@ -17,7 +17,12 @@ def get_password_hash(password: str) -> str:
 
 
 def verify_password(plain_password, hashed_password) -> bool:
-    """Проверяет пароль на валидность"""
+    """
+    Проверяет пароль на валидность
+
+    -Аргументы:
+        plain_password: пароль пользователя в обычном виде
+        hashed_password: захэшированный пароль"""
     return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -39,13 +44,19 @@ async def create_refresh_token(data: dict) -> str:
     user_id = int(data["sub"])
     token_user = await TokenDAO.find_one_or_none(user_id=user_id)
     if not token_user:
-        await TokenDAO.add(token=token, user_id=user_id, created_at = now_time, expires_at=expire)
+        await TokenDAO.add(token=token, user_id=user_id, created_at=now_time, expires_at=expire)
     else:
-        await TokenDAO.update_token(user_id, token)
+        await TokenDAO.update_token( created_at=now_time, expires_at=expire, user_id=user_id, token=token)
     return token
 
 async def authenticate_user(email: EmailStr, password: str):
-    ''' Аутенфицирует пользователя, возвращает либо его, либо ошибку '''
+    """Аутенфицирует пользователя
+    
+    Проверяет, есть ли пользователь с такой почтой в БД и совпадает ли введенный пароль
+    
+    -Возвращает:
+        Optional[users]: Экземпляр модели пользователя, если запись найдена.
+        Если запись не найдена, возвращается None."""
     user = await UsersDAO.find_one_or_none(email=email)
     if not (user and verify_password(password, user.hashed_password)):
         raise IncorrectEmailOrPasswordException

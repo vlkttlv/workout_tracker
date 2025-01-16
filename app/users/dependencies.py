@@ -17,6 +17,7 @@ def get_token(request: Request):
 
 async def get_refresh_token(token: str = Depends(get_token)):
     """Метод, получающий refresh токен"""
+    # декодируем текущий access токен, если он есть
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, settings.ALGORITHM
@@ -26,7 +27,9 @@ async def get_refresh_token(token: str = Depends(get_token)):
     user_id: str = payload.get("sub")
     if not user_id:
         raise UserIsNotPresentException
+    # находим refresh токен для текущего пользователя
     refresh_user = await TokenDAO.find_one_or_none(user_id=int(user_id))
+    # если refresh токен просрочен, то выбрасываем исключение
     if datetime.utcnow().timestamp() > refresh_user.expires_at.timestamp():
         raise HTTPException(status_code=401)
     refresh_token = refresh_user.token
