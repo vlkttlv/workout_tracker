@@ -52,9 +52,11 @@ class BaseDAO:
             Это добавит новую запись с именем 'Alice' и возрастом 25.
         """
         async with async_session_maker() as session:
-            stmt = insert(cls.model).values(**data)
-            await session.execute(stmt)
+            stmt = insert(cls.model).values(**data).returning(cls.model.id)
+            res = await session.execute(stmt)
             await session.commit()
+            return res.scalar()
+
 
     @classmethod
     async def delete(cls, **filter_by):

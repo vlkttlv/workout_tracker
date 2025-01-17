@@ -8,7 +8,8 @@ from sqlalchemy import pool
 from app.config import settings
 from alembic import context
 from app.users.models import Users, RefreshToken
-from app.exercises.models import Exercise
+from app.exercises.models import Exercise, WorkoutExercise
+from app.workouts.models import WorkoutPlans
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
