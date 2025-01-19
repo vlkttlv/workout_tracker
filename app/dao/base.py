@@ -70,6 +70,6 @@ class BaseDAO:
         """
         async with async_session_maker() as session:
             stmt = delete(cls.model).filter_by(**filter_by)
-            await session.execut(stmt)
+            await session.execute(stmt)
             await session.commit()
             
