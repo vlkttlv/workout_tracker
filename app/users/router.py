@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, Response, HTTPException
+from fastapi import APIRouter, Depends, Response
 import jwt
-from app.exceptions import IncorrectEmailOrPasswordException, IncorrectTokenFormatException, UserAlreadyExistsException
-from app.users.auth import authenticate_user, create_access_token, create_refresh_token, get_password_hash
-from app.users.dependencies import get_refresh_token
-from app.users.schemas import UserRegister, UserLogin
-from app.users.dao import UsersDAO
-from app.config import settings
 from jwt.exceptions import InvalidTokenError
+from app.exceptions import (IncorrectEmailOrPasswordException,
+                            IncorrectTokenFormatException, UserAlreadyExistsException)
+from app.users.auth import (authenticate_user, create_access_token,
+                            create_refresh_token, get_password_hash)
+from app.users.dependencies import get_current_user, get_refresh_token
+from app.users.schemas import UserRegister, UserLogin
+from app.users.dao import TokenDAO, UsersDAO
+from app.config import settings
 
 router = APIRouter(
     prefix="/auth",
@@ -42,7 +44,7 @@ async def login_user(response: Response, user_data: UserLogin):
 async def refresh_token(response: Response, refresh_token: str = Depends(get_refresh_token)):
     try:
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, settings.ALGORITHM)
-        user_id:str = payload.get("sub")
+        user_id: str = payload.get("sub")
         if user_id is None:
             raise IncorrectTokenFormatException
     except InvalidTokenError as e:
@@ -52,6 +54,7 @@ async def refresh_token(response: Response, refresh_token: str = Depends(get_ref
     return {"access_token": new_access_token}
 
 @router.post("/logout")
-async def logout_user(response: Response):
+async def logout_user(response: Response, current_user = Depends(get_current_user)):
     """Выход из системы"""
     response.delete_cookie("access_token")
+    await TokenDAO.delete(user_id=current_user.id) # удаляем refresh токен

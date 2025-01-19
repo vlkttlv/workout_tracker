@@ -8,8 +8,8 @@ from app.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-REFRESH_TOKEN_EXPIRE_DAYS=7
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 def get_password_hash(password: str) -> str:
     """Генерирует хэшированный пароль"""
@@ -46,7 +46,7 @@ async def create_refresh_token(data: dict) -> str:
     if not token_user:
         await TokenDAO.add(token=token, user_id=user_id, created_at=now_time, expires_at=expire)
     else:
-        await TokenDAO.update_token( created_at=now_time, expires_at=expire, user_id=user_id, token=token)
+        await TokenDAO.update_token(created_at=now_time, expires_at=expire, user_id=user_id, token=token)
     return token
 
 async def authenticate_user(email: EmailStr, password: str):

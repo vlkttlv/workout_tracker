@@ -17,11 +17,9 @@ def get_token(request: Request):
 
 async def get_refresh_token(token: str = Depends(get_token)):
     """Метод, получающий refresh токен"""
-    # декодируем текущий access токен, если он есть
+    # декодируем текущий access токен без проверки подписи и времени
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, settings.ALGORITHM
-        )
+        payload = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
     except InvalidTokenError as e:
         raise IncorrectTokenFormatException from e
     user_id: str = payload.get("sub")
