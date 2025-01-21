@@ -17,6 +17,7 @@ class WorkoutExercise(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     workout_plan_id = Column(Integer, ForeignKey('workout_plans.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     exercise_id = Column(Integer, ForeignKey('exercises.id'), nullable=False)
     reps = Column(Integer, nullable=False)
     sets = Column(Integer, nullable=False)
