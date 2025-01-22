@@ -108,7 +108,7 @@ class WorkoutPlansDAO(BaseDAO):
     @classmethod
     async def update_workout_plan(cls, workout_id: int, **data):
         """
-        Добавляет запись БД
+        Обновляет запись
 
         -Аргументы:
             workout_id: ID плана тренировки, которую надо обновить
