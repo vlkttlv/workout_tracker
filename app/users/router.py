@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/register", status_code=201)
+@router.post("/register", status_code=201, summary="Creates a new user")
 async def register_user(user_data: UserRegister):
     """Регистрация пользователя"""
     existing_user = await UsersDAO.find_one_or_none(email=user_data.email)
@@ -27,34 +27,38 @@ async def register_user(user_data: UserRegister):
                         hashed_password=hashed_password)
 
 
-@router.post("/login")
+@router.post("/login", summary="Logs in a user and returns access and refresh tokens")
 async def login_user(response: Response, user_data: UserLogin):
     """Аутенфикация пользователя"""
     user = await authenticate_user(user_data.email, user_data.password)
     if not user:
         raise IncorrectEmailOrPasswordException
-    access_token = create_access_token({"sub": str(user.id)})
-    refresh_token = await create_refresh_token(data={"sub": str(user.id)})
+    access_token = create_access_token({"sub": str(user.id), "role": user.role})
+    refresh_token = await create_refresh_token({"sub": str(user.id), "role": user.role})
     response.set_cookie("access_token", access_token, httponly=True)
     return {"access_token": access_token,
             "refresh_token": refresh_token,
             "details": f"привет, {user.name}!"}
 
-@router.post("/refresh")
-async def refresh_token(response: Response, refresh_token: str = Depends(get_refresh_token)):
-    try:
-        payload = jwt.decode(refresh_token, settings.SECRET_KEY, settings.ALGORITHM)
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise IncorrectTokenFormatException
-    except InvalidTokenError as e:
-        raise IncorrectTokenFormatException from e
-    new_access_token = create_access_token({"sub": user_id})
-    response.set_cookie("access_token", new_access_token, httponly=True)
-    return {"access_token": new_access_token}
 
-@router.post("/logout")
+@router.post("/logout", summary="Deletes tokens")
 async def logout_user(response: Response, current_user = Depends(get_current_user)):
     """Выход из системы"""
     response.delete_cookie("access_token")
     await TokenDAO.delete(user_id=current_user.id) # удаляем refresh токен
+
+
+@router.post("/token/refresh", summary="Updates the access token")
+async def refresh_token(response: Response, refresh_token: str = Depends(get_refresh_token)):
+    """Обновление access токена с помощью refresh токена"""
+    try:
+        payload = jwt.decode(refresh_token, settings.SECRET_KEY, settings.ALGORITHM)
+        user_id: str = payload.get("sub")
+        role = payload.get("role")
+        if user_id is None:
+            raise IncorrectTokenFormatException
+    except InvalidTokenError as e:
+        raise IncorrectTokenFormatException from e
+    new_access_token = create_access_token({"sub": user_id, "role": role})
+    response.set_cookie("access_token", new_access_token, httponly=True)
+    return {"access_token": new_access_token}
