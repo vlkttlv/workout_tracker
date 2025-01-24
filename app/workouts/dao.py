@@ -11,7 +11,7 @@ class WorkoutPlansDAO(BaseDAO):
 
 
     @classmethod
-    async def find_by_id(cls, workout_plan_id: int):
+    async def find_by_id(cls, workout_plan_id: int, user_id: int):
         async with async_session_maker() as session:
             
             # SELECT wp.id as workout_plan_id, wp.user_id, wp.name, wp.description, wp.created_at,
@@ -34,7 +34,7 @@ class WorkoutPlansDAO(BaseDAO):
                                 WorkoutExercise,
                                 WorkoutPlans.id == WorkoutExercise.workout_plan_id,
                                 )
-                                .where(WorkoutPlans.id == workout_plan_id))
+                                .where(WorkoutPlans.id == workout_plan_id and WorkoutPlans.user_id == user_id))
             results = await session.execute(stmt)
             # Обработка результата
             workout_plan_data = {}

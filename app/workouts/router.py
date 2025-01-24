@@ -13,11 +13,11 @@ from app.workouts.schemas import (AddWorkoutPlan, WorkoutPlanFull,
 
 router = APIRouter(prefix="/workout_plan", tags=["Workout plans"])
 
-@router.post("/", status_code=201, summary="Adds a new workout plan")
+@router.post("/", status_code=201, summary="Creates a new workout plan")
 async def add_workout_plan(plan: AddWorkoutPlan,
                            exercises: List[WorkoutExercise],
                            current_user = Depends(get_current_user)):
-    """Добавляет план тренировки"""
+    """Создает план тренировки"""
     if exercises == []:
         raise IncorrectNumberOfExercises
     await check_correct_exercise_id(exercises)
@@ -43,6 +43,12 @@ async def get_workout_plans(current_user = Depends(get_current_user)) -> List[Wo
     res = await WorkoutPlansDAO.find_all(user_id = current_user.id)
     return res
 
+@router.get("/{workout_id}", summary="Returns the user's workout plan by ID")
+async def get_workout_plan(workout_id:int, current_user = Depends(get_current_user)) -> List[WorkoutPlanFull]:
+    """Находит и возвращает все планы тренировок пользователя"""
+    res = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
+    return res
+
 @router.delete("/{workout_id}", summary="Deletes the workout plan")
 async def delete_workout_plan(workout_id: int, current_user=Depends(get_current_user)):
     """Удаляет план тренировки по указанному ID"""
@@ -51,9 +57,9 @@ async def delete_workout_plan(workout_id: int, current_user=Depends(get_current_
 
 
 @router.patch("/{workout_id}",
-              dependencies=[Depends(get_current_user)],
               summary="Updates the workout plan and returns the workout plan")
-async def update_workout_plan(update_workout: UpdateWorkoutPlan, workout_id: int):
+async def update_workout_plan(update_workout: UpdateWorkoutPlan, workout_id: int,
+                              current_user=Depends(get_current_user)):
     """
     Обновляет имя и/или описание плана тренировок по указанному идентификатору.
     """
@@ -62,15 +68,15 @@ async def update_workout_plan(update_workout: UpdateWorkoutPlan, workout_id: int
     if update_workout.description is not None:
         await WorkoutPlansDAO.update_workout_plan(workout_id=workout_id,
                                                   description=update_workout.description)
-    workout_plan = await WorkoutPlansDAO.find_by_id(workout_id)
+    workout_plan = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
     return workout_plan
 
 
 @router.patch("/{workout_id}/exercises/{exercise_id}",
-              dependencies=[Depends(get_current_user)],
               summary="Updates the exercise in the workout plan and returns the workout plan")
 async def update_workout_exercise(workout_id: int, exercise_id: int,
-                                  update_exercise: UpdateWorkoutExercise):
+                                  update_exercise: UpdateWorkoutExercise,
+                                  current_user = Depends(get_current_user)):
     """    
     Обновляет параметры упражнения (количество повторений/подходов/вес)
     в плане тренировок по указанным идентификаторам.
@@ -82,5 +88,5 @@ async def update_workout_exercise(workout_id: int, exercise_id: int,
     if update_exercise.weight is not None:
         await WorkoutExerciseDAO.update_exercise(exercise_id=exercise_id,
                                                  weight=update_exercise.weight)
-    workout_plan = await WorkoutPlansDAO.find_by_id(workout_id)
+    workout_plan = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
     return workout_plan

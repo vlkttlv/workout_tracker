@@ -10,7 +10,7 @@ from alembic import context
 from app.users.models import Users, RefreshToken
 from app.exercises.models import Exercise, WorkoutExercise
 from app.workouts.models import WorkoutPlans
-
+from app.shelduled_workouts.models import ShelduledWorkout
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
 
