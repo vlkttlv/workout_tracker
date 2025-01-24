@@ -14,3 +14,9 @@ class ShelduledWorkout(BaseModel):
     shelduled_date: date
     shelduled_time: time 
     status: str
+
+
+class UpdateShelduleWorkout(BaseModel):
+    shelduled_date: date = Field(default=None)
+    shelduled_time: time = Field(default=None) 
+    status: str = Field(default=None, examples=['completed', 'missed'])

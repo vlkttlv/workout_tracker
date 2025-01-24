@@ -1,8 +1,7 @@
-from datetime import date, time
-from fastapi import APIRouter, Depends, HTTPException, Query
-from app.exceptions import IncorrectIDOfShelduledWorkout, IncorrectIDOfWorkoutPlan
+from fastapi import APIRouter, Depends
+from app.exceptions import IncorrectIDOfShelduledWorkout, IncorrectIDOfWorkoutPlan, InvalidWorkoutStatusValue
 from app.shelduled_workouts.dao import ShelduledWorkoutDAO
-from app.shelduled_workouts.schemas import AddShelduledWorkout
+from app.shelduled_workouts.schemas import AddShelduledWorkout, UpdateShelduleWorkout
 from app.users.dependencies import get_current_user
 from app.workouts.dao import WorkoutPlansDAO
 
@@ -34,9 +33,9 @@ async def add_shelduled_workout(shelduled_workout: AddShelduledWorkout,
 
 
 @router.get('/', summary="Returns the user's shelduled workouts")
-async def get_shelduled_workouts(current_user = Depends(get_current_user)):
+async def get_shelduled_workouts(order: str, status: str, current_user = Depends(get_current_user)):
     """Возвращает все запланированные тренировки пользователя"""
-    res = await ShelduledWorkoutDAO.find_all(user_id=current_user.id)
+    res = await ShelduledWorkoutDAO.find_all(asc_or_desc=order, user_id=current_user.id, status=status)
     return res
 
 
@@ -51,9 +50,7 @@ async def get_shelduled_workout(shelduled_workout_id: int,
 
 @router.patch('/{shelduled_workout_id}', summary='Updates the shelduled workout')
 async def update_scheduled_workout(shelduled_workout_id: int,
-                                   shelduled_date: date = Query(default=None, description="Дата тренировки, например: 2025-01-25"),
-                                   shelduled_time: time = Query(default=None, description="Время тренировки, например: 13:00"),
-                                   status: str = Query(default=None, description="Например: completed - если завершена, missed - если пропущена"),
+                                   shelduled_workout: UpdateShelduleWorkout,
                                    current_user = Depends(get_current_user)):
     """
     Обновляет запланированную тренировку по ID.
@@ -63,16 +60,16 @@ async def update_scheduled_workout(shelduled_workout_id: int,
                                                      id=shelduled_workout_id)
     if res == []:
         raise IncorrectIDOfShelduledWorkout
-    if shelduled_date is not None:
+    if shelduled_workout.shelduled_date is not None:
         await ShelduledWorkoutDAO.update(shelduled_workout_id=shelduled_workout_id,
-                                         shelduled_date=shelduled_date)
-    if shelduled_time is not None:
+                                         shelduled_date=shelduled_workout.shelduled_date)
+    if shelduled_workout.shelduled_time is not None:
         await ShelduledWorkoutDAO.update(shelduled_workout_id=shelduled_workout_id,
-                                         shelduled_time=shelduled_time)
-    if status is not None:
-        if status in ['completed', 'missed']:
+                                         shelduled_time=shelduled_workout.shelduled_time)
+    if shelduled_workout.status is not None:
+        if shelduled_workout.status in ['completed', 'missed']:
             await ShelduledWorkoutDAO.update(shelduled_workout_id=shelduled_workout_id,
-                                             status=status)
+                                             status=shelduled_workout.status)
         else:
-            raise HTTPException(status_code=400, detail='Недопустмое значение статуса')
+            raise InvalidWorkoutStatusValue
         
