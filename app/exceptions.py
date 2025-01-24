@@ -14,7 +14,7 @@ class IncorrectEmailOrPasswordException(WorkoutTrackerException):
 
 class IncorrectTokenFormatException(WorkoutTrackerException):
     status_code = status.HTTP_401_UNAUTHORIZED
-    detail = "Неверный формат токена проверка"
+    detail = "Неверный формат токена"
 
 class TokenAbsentException(WorkoutTrackerException):
     status_code = status.HTTP_401_UNAUTHORIZED
@@ -37,4 +37,16 @@ class IncorrectNumberOfExercises(WorkoutTrackerException):
 
 class IncorrectIDOfExercise(WorkoutTrackerException):
     status_code = status.HTTP_409_CONFLICT
-    detail = "Некорректный номер id упражнения"
+    detail = "Некорректный ID упражнения"
+
+class IncorrectRoleOfUser(WorkoutTrackerException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = "Вы не обладаете ролью адмнистратора"
+
+class IncorrectIDOfWorkoutPlan(WorkoutTrackerException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Некорректный ID плана тренировки"
+
+class IncorrectIDOfShelduledWorkout(WorkoutTrackerException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Некорректный ID тренировки"
