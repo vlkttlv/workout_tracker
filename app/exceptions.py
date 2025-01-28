@@ -50,3 +50,9 @@ class IncorrectIDOfWorkoutPlan(WorkoutTrackerException):
 class IncorrectIDOfShelduledWorkout(WorkoutTrackerException):
     status_code = status.HTTP_409_CONFLICT
     detail = "Некорректный ID тренировки"
+
+class InvalidWorkoutStatusValue(WorkoutTrackerException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Недопустмое значение статуса тренировки"
+
+    
