@@ -14,7 +14,7 @@ from app.config import settings
 DATABASE_URL = settings.DATABASE_URL
 DATABASE_PARAMS = {}
 
-engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)  # движок
+engine = create_async_engine(DATABASE_URL)  # движок
 
 # генератор сессий; expire_on_commit - завершение транзакций
 async_session_maker = sessionmaker(
