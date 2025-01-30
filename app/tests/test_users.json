@@ -1,0 +1,14 @@
+[
+    {
+        "email": "vvb63@tpu.ru",
+        "name": "Violetta",
+        "role": "admin",
+        "hashed_password": "$2b$12$ErgdAG3LO0mu2AVG/0K2QO.JglqQat67N38rM4X2Zqo30KQUAC.TK"
+    },
+    {
+        "email": "test@test.ru",
+        "name": "Test",
+        "role": "user",
+        "hashed_password": "$2b$12$ErgdAG3LO0mu2AVG/0K2QO.JglqQat67N38rM4X2Zqo30KQUAC.TK"
+    }
+]
