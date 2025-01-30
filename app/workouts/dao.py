@@ -103,21 +103,3 @@ class WorkoutPlansDAO(BaseDAO):
                         "weight": row.weight
                     })
             return list(workout_plan_data.values())
-        
-
-    @classmethod
-    async def update_workout_plan(cls, workout_id: int, **data):
-        """
-        Обновляет запись
-
-        -Аргументы:
-            workout_id: ID плана тренировки, которую надо обновить
-            **data: атрибуты модели в качестве ключей и их значения в качестве значений.
-            Конкретно: name, description
-        -Пример: 
-            await WorkoutPlansDAO.update_workout_plan(workout_id=workout_id, description=update_workout.description)
-        """
-        async with async_session_maker() as session:
-            stmt = update(cls.model).where(cls.model.id==workout_id).values(**data)
-            await session.execute(stmt)
-            await session.commit()

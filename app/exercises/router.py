@@ -60,9 +60,9 @@ async def patch_exercise(exercise_id: int, exercise: UpdateExercise, current_use
     if current_exerc is None:
         raise IncorrectIDOfExercise
     if exercise.name is not None:
-        await ExerciseDAO.update_exercise(exercise_id=exercise_id, name=exercise.name)
+        await ExerciseDAO.update(id=exercise_id, name=exercise.name)
     if exercise.category is not None:
-        await ExerciseDAO.update_exercise(exercise_id=exercise_id, category=exercise.category)
+        await ExerciseDAO.update(id=exercise_id, category=exercise.category)
     if exercise.muscle_group is not None:
-        await ExerciseDAO.update_exercise(exercise_id=exercise_id, muscle_group=exercise.muscle_group)
+        await ExerciseDAO.update(id=exercise_id, muscle_group=exercise.muscle_group)
     return {"status": "success"}

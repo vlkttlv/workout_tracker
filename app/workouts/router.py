@@ -33,7 +33,8 @@ async def add_workout_plan(plan: AddWorkoutPlan,
             exercise_id=exerc.exercise_id,
             reps=exerc.reps,
             sets=exerc.sets,
-            weight=exerc.weight)
+            weight=exerc.weight,
+            user_id=current_user.id)
     return {"status": "success", "ID of the new workout plan": workout_id}
 
 
@@ -64,10 +65,10 @@ async def update_workout_plan(update_workout: UpdateWorkoutPlan, workout_id: int
     Обновляет имя и/или описание плана тренировок по указанному идентификатору.
     """
     if update_workout.name is not None:
-        await WorkoutPlansDAO.update_workout_plan(workout_id=workout_id, name=update_workout.name )
+        await WorkoutPlansDAO.update(id=workout_id, name=update_workout.name )
     if update_workout.description is not None:
-        await WorkoutPlansDAO.update_workout_plan(workout_id=workout_id,
-                                                  description=update_workout.description)
+        await WorkoutPlansDAO.update(id=workout_id,
+                                     description=update_workout.description)
     workout_plan = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
     return workout_plan
 
@@ -82,11 +83,11 @@ async def update_workout_exercise(workout_id: int, exercise_id: int,
     в плане тренировок по указанным идентификаторам.
     """
     if update_exercise.reps is not None:
-        await WorkoutExerciseDAO.update_exercise(exercise_id=exercise_id, reps=update_exercise.reps)
+        await WorkoutExerciseDAO.update(id=exercise_id, reps=update_exercise.reps)
     if update_exercise.sets is not None:
-        await WorkoutExerciseDAO.update_exercise(exercise_id=exercise_id, sets=update_exercise.sets)
+        await WorkoutExerciseDAO.update(id=exercise_id, sets=update_exercise.sets)
     if update_exercise.weight is not None:
-        await WorkoutExerciseDAO.update_exercise(exercise_id=exercise_id,
-                                                 weight=update_exercise.weight)
+        await WorkoutExerciseDAO.update(id=exercise_id,
+                                         weight=update_exercise.weight)
     workout_plan = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
     return workout_plan
