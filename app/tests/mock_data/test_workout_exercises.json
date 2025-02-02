@@ -129,5 +129,14 @@
         "reps": 10,
         "sets": 3,
         "weight": 0
+    },
+
+    {
+        "workout_plan_id": 4,
+        "user_id": 2,
+        "exercise_id": 1,
+        "reps": 1,
+        "sets": 1,
+        "weight": 1
     }
 ]

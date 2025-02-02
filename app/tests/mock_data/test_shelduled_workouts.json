@@ -1,0 +1,44 @@
+[
+    {
+        "user_id": 1,
+        "workout_plan_id": 1,
+        "shelduled_date": "2025-02-01",
+        "shelduled_time": "10:00:00",
+        "status": "done"
+    },
+    {
+        "user_id": 1,
+        "workout_plan_id": 2,
+        "shelduled_date": "2025-02-03",
+        "shelduled_time": "11:00:00",
+        "status": "done"
+    },
+    {
+        "user_id": 1,
+        "workout_plan_id": 3,
+        "shelduled_date": "2025-02-05",
+        "shelduled_time": "10:00:00",
+        "status": "skip"
+    },
+    {
+        "user_id": 1,
+        "workout_plan_id": 1,
+        "shelduled_date": "2025-02-08",
+        "shelduled_time": "18:00:00",
+        "status": "in progress"
+    },
+    {
+        "user_id": 1,
+        "workout_plan_id": 2,
+        "shelduled_date": "2025-02-10",
+        "shelduled_time": "10:00:00",
+        "status": "pending"
+    },
+    {
+        "user_id": 1,
+        "workout_plan_id": 3,
+        "shelduled_date": "2025-02-12",
+        "shelduled_time": "15:00:00",
+        "status": "pending"
+    }
+]
