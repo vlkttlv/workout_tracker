@@ -5,7 +5,6 @@ from app.tests.workout_plans_tests.mock_data import mock_workout_plan
 
 @pytest.mark.asyncio(scope="session")
 async def test_get_workout_plan(auth_ac: AsyncClient):
-    """Тест, проверяющий регистрацию пользователя"""
     response = await auth_ac.get("/workout_plan/")
     assert response.status_code == 200
     assert len(response.json()) == 3
@@ -16,7 +15,6 @@ async def test_get_workout_plan(auth_ac: AsyncClient):
 
 @pytest.mark.asyncio(scope="session")
 async def test_add_and_delete_workout_plan(auth_ac: AsyncClient):
-    """Тест, проверяющий регистрацию пользователя"""
     response = await auth_ac.post("/workout_plan/", json=mock_workout_plan)
     assert response.status_code == 201
     response = await auth_ac.get("/workout_plan/")
@@ -27,3 +25,12 @@ async def test_add_and_delete_workout_plan(auth_ac: AsyncClient):
     response = await auth_ac.get("/workout_plan/")
     assert response.status_code == 200
     assert len(response.json()) == 3
+
+
+@pytest.mark.asyncio(scope="session")
+async def test_update_workout_plan(auth_ac: AsyncClient):
+    response = await auth_ac.patch("/workout_plan/1", json={"name": "leg day"})
+    assert response.status_code == 200
+    assert response.json()[0]['name'] == 'leg day'
+    response = await auth_ac.patch("/workout_plan/1/exercises/9", json={"exercise": {"reps": 10}})
+    assert response.json()[0]['exercises'][0]['reps'] == 10
