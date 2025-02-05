@@ -1,7 +1,11 @@
 from sqlalchemy import delete, insert, select, update
 from app.db.database import async_session_maker
 
+
 class BaseDAO:
+
+    """Базовый класс для работы с БД"""
+
     model = None
 
     @classmethod
@@ -28,11 +32,11 @@ class BaseDAO:
 
         -Аргументы:
             **filter_by: атрибуты модели в качестве ключей и их значения в качестве значений.
-        -Пример: 
+        -Пример:
             await Users.find_all(name='John', age=30)
             Вернет все записи, где name равно 'John' и age равно 30.
         -Возвращает:
-            List[cls.model]: Список экземпляров модели, удовлетворяющих условиям фильтрации. 
+            List[cls.model]: Список экземпляров модели, удовлетворяющих условиям фильтрации.
             Если записи не найдены, возвращается пустой список.
         """
         async with async_session_maker() as session:
@@ -47,7 +51,7 @@ class BaseDAO:
 
         -Аргументы:
             **data: атрибуты модели в качестве ключей и их значения в качестве значений.
-        -Пример: 
+        -Пример:
             await Users.add(name='Alice', age=25)
             Это добавит новую запись с именем 'Alice' и возрастом 25.
         """
@@ -57,7 +61,6 @@ class BaseDAO:
             await session.commit()
             return res.scalar()
 
-
     @classmethod
     async def delete(cls, **filter_by):
         """
@@ -65,14 +68,13 @@ class BaseDAO:
 
         -Аргументы:
         **filter_by: атрибуты модели в качестве ключей и их значения в качестве значений.
-        -Пример: 
+        -Пример:
             await MyModel.delete(name='Alice') - Это удалит все записи, где name равно 'Alice'.
         """
         async with async_session_maker() as session:
             stmt = delete(cls.model).filter_by(**filter_by)
             await session.execute(stmt)
             await session.commit()
-
 
     @classmethod
     async def update(cls, id: int, **data):
@@ -82,12 +84,10 @@ class BaseDAO:
         -Аргументы:
             id: ID записи, которую надо обновить
             **data: атрибуты модели в качестве ключей и их значения в качестве значений.
-        -Пример: 
+        -Пример:
             await WorkoutPlansDAO.update_workout_plan(workout_id=workout_id, description=update_workout.description)
         """
         async with async_session_maker() as session:
-            stmt = update(cls.model).where(cls.model.id==id).values(**data)
+            stmt = update(cls.model).where(cls.model.id == id).values(**data)
             await session.execute(stmt)
             await session.commit()
-
-            
