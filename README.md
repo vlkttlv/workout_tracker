@@ -1,5 +1,7 @@
 # Трекер Тренировок
 
+Пример реализации проекта трекера-тренировок с сайта [roadmap.sh](https://roadmap.sh/projects/fitness-workout-tracker)
+
 ## Установка и запуск
 
 
