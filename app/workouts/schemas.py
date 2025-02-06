@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from pydantic import BaseModel, Field
 
-from app.exercises.schemas import WorkoutExerciseWithoutID, WorkoutExercise
+from app.exercises.schemas import WorkoutExercise
 
 
 class AddWorkoutPlan(BaseModel):
@@ -25,5 +25,7 @@ class UpdateWorkoutPlan(BaseModel):
 
 
 class UpdateWorkoutExercise(BaseModel):
-    exercise: WorkoutExerciseWithoutID
+    reps: int = Field(gt=0, default=None)
+    sets: int = Field(gt=0, default=None)
+    weight: int = Field(gt=-1, default=None)
 

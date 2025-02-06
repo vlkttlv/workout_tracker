@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.exceptions import IncorrectNumberOfExercises
 from app.exercises.schemas import WorkoutExercise
@@ -83,11 +83,11 @@ async def update_workout_exercise(workout_id: int, exercise_id: int,
     в плане тренировок по указанным идентификаторам.
     """
     if update_exercise.reps is not None:
-        await WorkoutExerciseDAO.update(id=exercise_id, reps=update_exercise.reps)
+        await WorkoutExerciseDAO.update(workout_id, exercise_id, reps=update_exercise.reps)
     if update_exercise.sets is not None:
-        await WorkoutExerciseDAO.update(id=exercise_id, sets=update_exercise.sets)
+        await WorkoutExerciseDAO.update(workout_id, exercise_id, sets=update_exercise.sets)
     if update_exercise.weight is not None:
-        await WorkoutExerciseDAO.update(id=exercise_id,
+        await WorkoutExerciseDAO.update(workout_id, exercise_id, 
                                          weight=update_exercise.weight)
     workout_plan = await WorkoutPlansDAO.find_by_id(workout_plan_id=workout_id, user_id=current_user.id)
     return workout_plan

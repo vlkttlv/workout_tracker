@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, and_
 from app.dao.base import BaseDAO
 from app.workouts.models import WorkoutPlans
 from app.exercises.models import WorkoutExercise
@@ -34,7 +34,7 @@ class WorkoutPlansDAO(BaseDAO):
                                 WorkoutExercise,
                                 WorkoutPlans.id == WorkoutExercise.workout_plan_id,
                                 )
-                                .where(WorkoutPlans.id == workout_plan_id and WorkoutPlans.user_id == user_id))
+                                .where(and_(WorkoutPlans.id == workout_plan_id, WorkoutPlans.user_id == user_id)))
             results = await session.execute(stmt)
             # Обработка результата
             workout_plan_data = {}
