@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
 
-
 class Exercise(BaseModel):
 
     id: int
@@ -9,11 +8,13 @@ class Exercise(BaseModel):
     category: str
     muscle_group: str
 
+
 class AddExercise(BaseModel):
 
     name: str = Field(min_length=3)
     category: str = Field(min_length=3)
     muscle_group: str = Field(min_length=3)
+
 
 class UpdateExercise(BaseModel):
     name: str = Field(default=None, title="Name of the exercise")
@@ -22,13 +23,7 @@ class UpdateExercise(BaseModel):
 
 
 class WorkoutExercise(BaseModel):
-    exercise_id: int = Field(gt = 5)
-    reps: int = Field(gt = 0)
-    sets: int = Field(gt = 0)
-    weight: int = Field(gt = 0)
-
-class WorkoutExerciseWithoutID(BaseModel):
-    reps: int = Field(gt = 0)
-    sets: int = Field(gt = 0)
-    weight: int = Field(gt = 0)
-
+    exercise_id: int = Field(gt=0)
+    reps: int = Field(gt=0)
+    sets: int = Field(gt=0)
+    weight: int = Field(gt=-1)
