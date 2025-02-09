@@ -19,9 +19,9 @@ async def get_report_service(user_id: int, date_from: date, date_to: date):
 
     statuses = {}
     statuses_tuple = [
-        (user_id, "completed"),
+        (user_id, "done"),
         (user_id, "pending"),
-        (user_id, "in_progress"),
+        (user_id, "in progress"),
         (user_id, "skip"),
     ]
 
