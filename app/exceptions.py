@@ -53,6 +53,6 @@ class IncorrectIDOfShelduledWorkout(WorkoutTrackerException):
 
 class InvalidWorkoutStatusValue(WorkoutTrackerException):
     status_code = status.HTTP_409_CONFLICT
-    detail = "Недопустмое значение статуса тренировки"
+    detail = "Недопустимое значение статуса тренировки"
 
     
