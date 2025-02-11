@@ -1,6 +1,7 @@
 """httpx предоставляет асинхронного клиента для тестов"""
 from httpx import AsyncClient
 import pytest
+from app.exercises.dao import WorkoutExerciseDAO
 from app.tests.workout_plans_tests.mock_data import mock_workout_plan
 
 @pytest.mark.asyncio(scope="session")
@@ -32,5 +33,7 @@ async def test_update_workout_plan(auth_ac: AsyncClient):
     response = await auth_ac.patch("/workout_plan/1", json={"name": "leg day"})
     assert response.status_code == 200
     assert response.json()[0]['name'] == 'leg day'
-    response = await auth_ac.patch("/workout_plan/1/exercises/9", json={"exercise": {"reps": 10}})
-    assert response.json()[0]['exercises'][0]['reps'] == 10
+    response = await auth_ac.patch("/workout_plan/1/exercises/9", json={"reps": 10})
+    assert response.status_code == 200
+    result = await WorkoutExerciseDAO.find_one_or_none(workout_plan_id=1, exercise_id=9)
+    assert result.reps == 10
